@@ -35,7 +35,7 @@ router.post('/', async (req,res,next)=>{
 try {
     const {name, type} = req.body;
     const results = await db.query(`INSERT INTO users (name,type) VALUES ($1,$2) RETURNING  id, name, type`, [name,type])
-    return res.status(201).json(results.rows)
+    return res.status(201).json({user:results.rows[0]})
 
 } catch (error) {
     return next(error)
@@ -54,7 +54,7 @@ router.patch('/:id', async (req,res,next)=>{
         WHERE id = $3 
         RETURNING  id, name, type`,
         [name,type,id]);
-        return res.json(results.rows[0]);
+        return res.json({user:results.rows[0]});
     
     } catch (error) {
         return next(error)
@@ -67,10 +67,9 @@ router.patch('/:id', async (req,res,next)=>{
     
         try {
             const {id} =  req.params;
-            const results = await db.query(`SELECT * FROM users WHERE id = $1 
-            RETURNING  id, name, type`,
+            const results = await db.query(`SELECT * FROM users WHERE id = $1`,
             [id]);
-            return res.json(results.rows[0]);
+            return res.json({user:results.rows[0]});
         
         } catch (error) {
             return next(error)
